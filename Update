@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# This script automates the process of updating a database and Docker image for Have I Been Pwned? password data.
+# The steps include:
+# 1. Checking if Docker is running and starting it if necessary.
+# 2. Prompting the user to decide whether to download the latest password data and rebuild the database based on the timestamp of the existing database file.
+# 3. Downloading the latest passwords and saving them in pwnedpasswords.txt.
+# 4. Removing the old pwned.db database file if it exists and the user chooses to rebuild the database.
+# 5. Running a custom Python script to build a new pwned.db database from the downloaded password file.
+# 6. Removing the password file (pwnedpasswords.txt) after the database is built.
+# 7. Building a Docker image using the latest base image of bitnami/minideb, which includes the newly built pwned.db.
+# 8. Pushing the updated Docker image to Docker Hub.
+
+set -e  # Exit immediately if a command exits with a non-zero status.
+
+# Define constants
+PROJECT_DIR="/Users/dag/Dropbox/Documents/Docker/pwned"
+PASSWORD_BASENAME="pwnedpasswords"
+PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
+DB_FILE="pwned.db"
+PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
+DOCKER_IMAGE="dglass710/pwned"
+DOCKERFILE_PATH="Dockerfile"
+
+# Change to the Project Directory 
+cd $PROJECT_DIR
+
+# Ensure Docker is running
+echo "Starting Docker if it's not already running..."
+open /Applications/Docker.app
+
+# Function to download the latest passwords
+download_passwords() {
+    echo "Downloading the latest passwords..."
+    haveibeenpwned-downloader "$PASSWORD_BASENAME" -o -p 64 # You can get this tool at github.com/HaveIBeenPwned/PwnedPasswordsDownloader
+}
+
+# Function to build the database
+build_database() {
+    # Run the custom Python script to build the database from the updated pwnedpasswords file
+    echo "Building the database..."
+    $PYTHON_PATH txt_to_db.py
+
+    # Remove the password file after building the database
+    echo "Removing the password file..."
+    rm "$PASSWORD_FILE"
+}
+
+# Check if the database file already exists
+if [ -f "$DB_FILE" ]; then
+    last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
+    read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
+    case "$choice" in 
+        y|Y ) 
+            download_passwords
+            echo "Removing old database..."
+            rm "$DB_FILE"
+            build_database
+            ;;
+        n|N ) 
+            echo "Skipping download and database rebuild."
+            echo "Now pausing to ensure Docker is started."
+            sleep 5  # Wait for Docker to start
+            ;;
+        * ) 
+            echo "Invalid choice. Exiting."
+            exit 1
+            ;;
+    esac
+else
+    echo "No existing database found. Creating a new one."
+    download_passwords
+    build_database
+fi
+
+# Build the Docker image according to the Dockerfile
+echo "Building Docker image..."
+docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
+
+# Push the updated image to Docker Hub
+echo "Pushing Docker image to Docker Hub..."
+docker push "$DOCKER_IMAGE"
+
+echo "Update script completed successfully."
+
