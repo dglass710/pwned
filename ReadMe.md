@@ -144,10 +144,13 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ### Manual Update Process
 
-- If needed, you can manually trigger each step by running the respective commands inside the Update script. From within the project directory:
+- If needed, you can manually trigger each step by running the respective commands inside the Update script. 
+- Navigate to the project directory.
+- Change ```64``` to adjust the number of threads used in the asynchronous download.
 ```
     haveibeenpwned-downloader pwnedpasswords -o -p 64
     python3 txt_to_db.py
+    rm pwnedpasswords.txt
     docker build -t <docker image name>
     docker push <docker image name>
 ```
