@@ -15,11 +15,11 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 
 # Define constants
 PROJECT_DIR="/Users/dag/Dropbox/Documents/Docker/pwned"
+DOCKER_IMAGE="dglass710/pwned"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="pwned.db"
 PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
-DOCKER_IMAGE="dglass710/pwned"
 DOCKERFILE_PATH="Dockerfile"
 
 # Change to the Project Directory 
