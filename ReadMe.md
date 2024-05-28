@@ -1,5 +1,19 @@
 # Have I Been Pwned? Offline Project
 
+## Quick Start: Running the Docker Image
+
+If you just want to run the Docker image to check if your passwords have been compromised and don't need the source code or to build anything, follow these steps:
+
+ 1. **Ensure Docker is Installed and Running**
+    - Make sure Docker is installed on your system and the Docker daemon is running.
+ 2. **Run the Docker Container**
+    - Use the following command to pull and run the Docker image:
+    ```docker run -it dglass710/pwned```
+    - This command will start an interactive session where you can check your passwords against the offline database.
+
+
+
+
 ## Overview
 
 This project provides an offline version of the website HaveIBeenPwned.com. It enables users to check if their passwords have been compromised using data from Troy Hunt's Have I Been Pwned (HIBP) service. The project automates the process of downloading the latest passwords, building a database, and creating a Docker image for easy deployment and usage.
@@ -107,7 +121,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 - Ensure you have Docker installed and running on your system.
 - Clone or download the project directory to your local machine.
-- Install the HaveIBeenPwned/PwnedPasswordsDownloader tool available at: [https://github.com/HaveIBeenPwned/PwnedPasswordsDownloader](https://github.com/HaveIBeenPwned/PwnedPasswordsDownloader)
+- Install the HaveIBeenPwned/PwnedPasswordsDownloader tool available at: [HaveIBeenPwned/PwnedPasswordsDownloader](https://github.com/HaveIBeenPwned/PwnedPasswordsDownloader)
 - Ensure the system has at least 100 Gigabytes of free disk space as the text file, database, and image are all about 40 GB each, and having all three present at once might require even more space.
 
 ### Configuration
@@ -122,6 +136,12 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 - Make the script executable: `chmod +x /path/to/your/project/Update`
 - Run the script: `./path/to/your/project/Update`
 - Follow the prompts to update the database and build the Docker image.
+
+### Running the Docker Container
+
+- To run the Docker container and start the interactive password checking script, use:
+
+  ```docker run -it dglass710/pwned```
 
 ### Reconnecting to the Container
 
