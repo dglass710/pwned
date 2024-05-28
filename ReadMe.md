@@ -49,7 +49,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Contents**: 
       - 4096 tables, each corresponding to the first three characters of the hashes.
 
-![](https://thedavidglass.com/assets/project_4/Database Visual.jpg)
+![](https://thedavidglass.com/assets/project_4/Database-Visual.jpg)
 
 5. **pwnedpasswords.txt**
     - **Purpose**: Text file containing the latest SHA-1 hashes and occurrence counts of compromised passwords.
@@ -89,7 +89,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
         7. Continues to prompt the user for passwords until 'done', 'exit', or 'quit' is entered.
         8. Closes the database connection.
 
-![](https://thedavidglass.com/assets/project_4/Main Application.jpg)
+![](https://thedavidglass.com/assets/project_4/Main-Application.jpg)
 
 8. **txt_to_db.py**
     - **Purpose**: Script to create and populate the `pwned.db` database from the `pwnedpasswords.txt` file.
@@ -99,7 +99,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       2. Reads the `pwnedpasswords.txt` file line by line.
       3. Populates the appropriate table with the SHA-1 hash and its occurrence count.
 
-![](https://thedavidglass.com/assets/project_4/Database Generator.jpg)
+![](https://thedavidglass.com/assets/project_4/Database-Generator.jpg)
 
 ## Usage Instructions
 
