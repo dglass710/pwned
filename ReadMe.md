@@ -9,7 +9,7 @@ If you just want to run the Docker image to check if your passwords have been co
  2. **Run the Docker Container**
     - Use the following command to pull and run the Docker image:
     ```
-        docker run -it dglass710/pwned
+    docker run -it dglass710/pwned
     ```
     - This command will start an interactive session where you can check your passwords against the offline database.
 
