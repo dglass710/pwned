@@ -4,17 +4,17 @@
 
 If you just want to run the Docker image to check if your passwords have been compromised and don't need the source code or to build anything, follow these steps:
 
- 1. **Ensure Docker is Installed and Running**
-    - Make sure Docker is installed on your system and the Docker daemon is running.
- 2. **Run the Docker Container**
-    - Use the following command to pull and run the Docker image:
-    ```
-    docker run -it dglass710/pwned
-    ```
-    - This command will start an interactive session where you can check your passwords against the offline database.
-
-
-
+1. **Ensure Docker is Installed and Running**
+   - Make sure Docker is installed on your system and the Docker daemon is running.
+   
+2. **Run the Docker Container**
+   - Use the following command to pull and run the Docker image:
+   
+   ```
+   docker run -it dglass710/pwned
+   ```
+   
+   - This command will start an interactive session where you can check your passwords against the offline database.
 
 ## Overview
 
@@ -40,7 +40,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Purpose**: Defines the Docker image that includes the Python environment and the pre-built `pwned.db` database.
     - **Usage**: Automatically builds an image that can be run on any system with Docker installed.
     - **Contents**: 
-      - Specifies the base image (bitnami/minideb).
+      - Specifies the base image (`bitnami/minideb`).
       - Copies project files into the Docker image.
       - Sets up the environment and dependencies for running the offline HIBP tool.
 
@@ -65,7 +65,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Contents**: 
       - 4096 tables, each corresponding to the first three characters of the hashes.
 
-![](https://thedavidglass.com/assets/project_4/Database-Visual.jpg)
+![Database Visual](https://thedavidglass.com/assets/project_4/Database-Visual.jpg)
 
 5. **pwnedpasswords.txt**
     - **Purpose**: Text file containing the latest SHA-1 hashes and occurrence counts of compromised passwords.
@@ -89,12 +89,12 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       7. Builds a new Docker image with the latest database.
       8. Pushes the updated Docker image to Docker Hub.
 
-![](https://thedavidglass.com/assets/project_4/Update.jpg)
+![Update Script Visual](https://thedavidglass.com/assets/project_4/Update.jpg)
 
 7. **bash**
     - **Purpose**: Main script to interactively check if a password has been compromised.
     - **Usage**: This script is run within the Docker container to query the pwned.db database.
-    - **Naming Reason**: Named ```bash``` because the Dockerfile sets this script as the entry point, replacing the typical bash shell.
+    - **Naming Reason**: Named `bash` because the Dockerfile sets this script as the entry point, replacing the typical bash shell.
     - Steps:
         1. Checks if the script has run previously in the current container by looking for the ran_previously file in the /pwned/ directory.
         2. If not run previously, it creates the ran_previously file and displays a message indicating the preparation of the database.
@@ -105,7 +105,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
         7. Continues to prompt the user for passwords until 'done', 'exit', or 'quit' is entered.
         8. Closes the database connection.
 
-![](https://thedavidglass.com/assets/project_4/Main-Application.jpg)
+![Main Application Visual](https://thedavidglass.com/assets/project_4/Main-Application.jpg)
 
 8. **txt_to_db.py**
     - **Purpose**: Script to create and populate the `pwned.db` database from the `pwnedpasswords.txt` file.
@@ -115,7 +115,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       2. Reads the `pwnedpasswords.txt` file line by line.
       3. Populates the appropriate table with the SHA-1 hash and its occurrence count.
 
-![](https://thedavidglass.com/assets/project_4/Database-Generator.jpg)
+![Database Generator Visual](https://thedavidglass.com/assets/project_4/Database-Generator.jpg)
 
 ## Usage Instructions
 
@@ -143,20 +143,28 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 - To run the Docker container and start the interactive password checking script, use:
 
-  ```docker run -it dglass710/pwned```
+  ```
+  docker run -it dglass710/pwned
+  ```
 
 ### Reconnecting to the Container
 
 - To reconnect to the running Docker container, use:
 
-  ```docker exec -it <container_name> pwned```
+  ```
+  docker exec -it <container_name> pwned
+  ```
 
 - To check the container's name and status:
 
-  ```docker container ls -a```
+  ```
+  docker container ls -a
+  ```
 
 - To start a stopped container:
-  ```docker start <container_name>```
+  ```
+  docker start <container_name>
+  ```
 
 ## Updating the Database and Docker Image
 
@@ -168,7 +176,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 - If needed, you can manually trigger each step by running the respective commands inside the Update script. 
 - Navigate to the project directory.
-- Change ```64``` to adjust the number of threads used in the asynchronous download.
+- Change `64` to adjust the number of threads used in the asynchronous download.
     ```
     rm pwnedpasswords.txt || true && \
     haveibeenpwned-downloader pwnedpasswords -o -p 64 && \
@@ -183,10 +191,55 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 - Ensure you have the necessary permissions to execute the scripts and access Docker.
 
-- The script ```Update``` is designed to run on macOS. 
-    - It should theoretically run on Linux assuming Docker is already running. However, the open command (used to start Docker) may not work on Linux and might return an error code preventing further code execution. 
+- The script `Update` is designed to run on macOS. 
+    - It should theoretically run on Linux assuming Docker is already running. However, the `open` command (used to start Docker) may not work on Linux and might return an error code preventing further code execution. 
     - Users should expect potential stability issues on Linux systems as it has not been tested at all. 
     - You can easily modify it for Linux or port it to CMD or Powershell! 
 
-- Regularly update the project by running the ```Update``` script to incorporate the latest features and security patches.
+- Regularly update the project by running the `Update` script to incorporate the latest features and security patches.
+
+## Error Handling
+
+### Common Issues
+
+1. **Docker Not Installed**:
+   - **Error**: Command `docker: command not found`
+   - **Solution**: Install Docker from [Docker's official website](https://www.docker.com/get-started).
+
+2. **Permission Denied**:
+   - **Error**: `Permission denied` when running scripts.
+   - **Solution**: Ensure you have the necessary permissions to execute the scripts. Use `chmod +x scriptname` to make the script executable.
+
+### Troubleshooting
+
+1. **Docker Container Fails to Start**:
+   - **Solution**: Check if Docker is running using `docker ps`. Ensure there are no conflicting containers using `docker container ls -a`.
+
+2. **Database Connection Issues**:
+   - **Solution**: Ensure the `pwned.db` file exists and is in the correct directory. Check the database connection settings in the `bash` script.
+
+## Security Considerations
+
+- **Data Handling**: Ensure that sensitive data, such as passwords, are handled securely and not exposed unnecessarily.
+- **Docker Security**: Regularly update your Docker installation to mitigate vulnerabilities. Follow best practices for Docker container security.
+
+## Usage Examples
+
+### Checking a Password
+
+1. **Run the Docker Container**:
+   ```
+   docker run -it dglass710/pwned
+   ```
+2. **Enter a Password**: When prompted, enter the password you want to check.
+3. **View Results**: The script will output whether the password has been compromised and the number of times it has appeared in data breaches.
+
+Example Session:
+```
+$ docker run -it dglass710/pwned
+Enter password to check: password123
+Password 'password123' has been compromised 47,839 times.
+Enter password to check: quit
+Goodbye!
+```
 
