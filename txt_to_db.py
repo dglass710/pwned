@@ -16,7 +16,7 @@ def count_lines(filename):
 def process_file(filename, cursor, total_lines, progress_precision):
     line_number = 0
     start_time = time.time()
-    precision = max(0, int(-math.log10(progress_precision)))
+    precision = max(0, math.ceil(-math.log10(progress_precision)))
     alert_frequency = max(1, total_lines // int(100 / progress_precision))
 
     with open(filename, 'r') as f:
@@ -32,7 +32,7 @@ def process_file(filename, cursor, total_lines, progress_precision):
                 remaining_time = elapsed_time * (total_lines - line_number) / line_number
                 print(f'{progress:.{precision}f}% complete\nTime elapsed: {ht(elapsed_time, 0)}\nEstimated time remaining: {ht(remaining_time, 0)}')
 
-def main(infile, progress_precision):
+def main(infile, progress_precision=.1):
     print('Ensure pwned.db does not already exist. If it does, remove it and run this script again!')
 
     conn = sqlite3.connect('pwned.db')
@@ -54,4 +54,4 @@ def main(infile, progress_precision):
     print('Processing complete.')
 
 # Run the main function
-main('pwnedpasswords.txt', 1)
+main('pwnedpasswords.txt')
