@@ -175,7 +175,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     rm pwned.db && \
     python3 txt_to_db.py && \
     rm pwnedpasswords.txt && \
-    docker build -t <docker image name> && \
+    docker build -t <docker image name> . && \
     docker push <docker image name>
     ```
 
