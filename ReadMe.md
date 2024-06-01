@@ -170,11 +170,11 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 - Navigate to the project directory.
 - Change ```64``` to adjust the number of threads used in the asynchronous download.
     ```
-    rm pwnedpasswords.txt; \
+    rm pwnedpasswords.txt || true && \
     haveibeenpwned-downloader pwnedpasswords -o -p 64 && \
-    rm pwned.db; \
+    rm pwned.db || true && \
     python3 txt_to_db.py && \
-    rm pwnedpasswords.txt; \
+    rm pwnedpasswords.txt || true && \
     docker build -t <docker image name> . && \
     docker push <docker image name>
     ```

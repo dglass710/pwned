@@ -1,5 +1,4 @@
-import sqlite3
-import time
+import sqlite3, time, math
 from HumanTime import TimeAutoShort as ht
 from commaNumber import sayFullName as sn, commaNumber as cn
 
@@ -14,9 +13,11 @@ def count_lines(filename):
     with open(filename, 'r') as f:
         return sum(1 for line in f)
 
-def process_file(filename, cursor, total_lines, alert_frequency):
+def process_file(filename, cursor, total_lines, progress_precision):
     line_number = 0
     start_time = time.time()
+    precision = max(0, int(-math.log10(progress_precision)))
+    alert_frequency = max(1, total_lines // int(100 / progress_precision))
 
     with open(filename, 'r') as f:
         for line in f:
@@ -29,7 +30,7 @@ def process_file(filename, cursor, total_lines, alert_frequency):
                 progress = (line_number / total_lines) * 100
                 elapsed_time = time.time() - start_time
                 remaining_time = elapsed_time * (total_lines - line_number) / line_number
-                print(f'{progress:.2f}% complete\nTime elapsed: {ht(elapsed_time, 2)}\nEstimated time remaining: {ht(remaining_time, 2)}')
+                print(f'{progress:.{precision}f}% complete\nTime elapsed: {ht(elapsed_time, 0)}\nEstimated time remaining: {ht(remaining_time, 0)}')
 
 def main(infile, progress_precision):
     print('Ensure pwned.db does not already exist. If it does, remove it and run this script again!')
@@ -45,10 +46,8 @@ def main(infile, progress_precision):
     total_lines = count_lines(infile)
     print(f'Finished counting {cn(total_lines).lower()} ({sn(total_lines).lower()}) lines in {ht(time.time() - start_time, 2)}')
 
-    alert_frequency = max(1, total_lines // int(100 / progress_precision))
-
     print('Processing the file...')
-    process_file(infile, cursor, total_lines, alert_frequency)
+    process_file(infile, cursor, total_lines, progress_precision)
 
     conn.commit()
     conn.close()
