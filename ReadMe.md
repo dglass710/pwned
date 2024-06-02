@@ -124,7 +124,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 - Ensure you have Docker installed and running on your system.
 - Clone or download the project directory to your local machine.
 - Install the HaveIBeenPwned/PwnedPasswordsDownloader tool available at: [HaveIBeenPwned/PwnedPasswordsDownloader](https://github.com/HaveIBeenPwned/PwnedPasswordsDownloader)
-- Ensure the system has at least 100 Gigabytes of free disk space as the text file, database, and image are all about 40 GB each, and having all three present at once might require even more space.
+- Ensure the system has at least 100 Gigabytes of free disk space to accommodate the text file and database simultaneously, as well as the database and Docker image at the same time. This means increasing Docker's default virtual disk space from 64 GB to 100+ GB.
 
 ### Configuration
 
