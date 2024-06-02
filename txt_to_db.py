@@ -1,4 +1,4 @@
-import sqlite3, time, math
+import sqlite3, time, math, sys
 from HumanTime import TimeAutoShort as ht
 from commaNumber import sayFullName as sn, commaNumber as cn
 
@@ -12,6 +12,12 @@ def create_tables(cursor):
 def count_lines(filename):
     with open(filename, 'r') as f:
         return sum(1 for line in f)
+
+def move_cursor_up(n):
+    sys.stdout.write(f"\033[{n}A")
+
+def clear_line():
+    sys.stdout.write("\033[K")
 
 def process_file(filename, cursor, total_lines, progress_precision):
     line_number = 0
@@ -30,7 +36,15 @@ def process_file(filename, cursor, total_lines, progress_precision):
                 progress = (line_number / total_lines) * 100
                 elapsed_time = time.time() - start_time
                 remaining_time = elapsed_time * (total_lines - line_number) / line_number
-                print(f'{progress:.{precision}f}% complete\nTime elapsed: {ht(elapsed_time, 0)}\nEstimated time remaining: {ht(remaining_time, 0)}')
+                
+                move_cursor_up(3)  # Move the cursor up 3 lines
+                clear_line()       # Clear the first line
+                sys.stdout.write(f'{progress:.{precision}f}% complete\n')
+                clear_line()       # Clear the second line
+                sys.stdout.write(f'Time elapsed: {ht(elapsed_time, 0)}\n')
+                clear_line()       # Clear the third line
+                sys.stdout.write(f'Estimated time remaining: {ht(remaining_time, 0)}\n')
+                sys.stdout.flush()
 
 def main(infile, progress_precision=.1):
     print('Ensure pwned.db does not already exist. If it does, remove it and run this script again!')
@@ -55,3 +69,4 @@ def main(infile, progress_precision=.1):
 
 # Run the main function
 main('pwnedpasswords.txt')
+
