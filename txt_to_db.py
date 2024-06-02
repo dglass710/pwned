@@ -46,7 +46,7 @@ def process_file(filename, cursor, total_lines, progress_precision):
                 sys.stdout.write(f'Estimated time remaining: {ht(remaining_time, 0)}\n')
                 sys.stdout.flush()
 
-def main(infile, progress_precision=.1):
+def main(infile, progress_precision=.01):
     print('Ensure pwned.db does not already exist. If it does, remove it and run this script again!')
 
     conn = sqlite3.connect('pwned.db')
