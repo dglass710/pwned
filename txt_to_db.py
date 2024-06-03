@@ -19,6 +19,14 @@ def move_cursor_up(n):
 def clear_line():
     sys.stdout.write("\033[K")
 
+def color_text(text, color_code):
+    return f"\033[{color_code}m{text}\033[0m"
+
+def color_digits(text, color_code=36):
+    parts = text.split(' ')
+    colored_parts = [color_text(part, color_code) if part.isdigit() else part for part in parts]
+    return ' '.join(colored_parts)
+
 def process_file(filename, cursor, total_lines, progress_precision):
     line_number = 0
     start_time = time.time()
@@ -39,11 +47,11 @@ def process_file(filename, cursor, total_lines, progress_precision):
                 
                 move_cursor_up(3)  # Move the cursor up 3 lines
                 clear_line()       # Clear the first line
-                sys.stdout.write(f'{progress:.{precision}f}% complete\n')
+                sys.stdout.write(f'{color_text(f"{progress:.{precision}f}", 33)}% complete\n')  # Cyan for percentage
                 clear_line()       # Clear the second line
-                sys.stdout.write(f'Time elapsed: {ht(elapsed_time, 0)}\n')
+                sys.stdout.write(f'Time elapsed: {color_digits(ht(elapsed_time, 0), 33)}\n')  # Cyan for digits
                 clear_line()       # Clear the third line
-                sys.stdout.write(f'Estimated time remaining: {ht(remaining_time, 0)}\n')
+                sys.stdout.write(f'Estimated time remaining: {color_digits(ht(remaining_time, 0), 33)}\n')  # Cyan for digits
                 sys.stdout.flush()
 
 def main(infile, progress_precision=.01):
