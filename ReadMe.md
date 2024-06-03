@@ -24,20 +24,20 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ```
 /path/to/your/project/
-├── ReadMe.md (Markdown)
 ├── Dockerfile (Dockerfile DSL)
 ├── HumanTime.py (Python)
-├── commaNumber.py (Python)
-├── pwned.db (SQLite)
-├── pwnedpasswords.txt (Plain Text)
+├── ReadMe.md (Markdown)
 ├── Update (Bash)
 ├── UpdateFull (Bash)
 ├── UpdatePartial (Bash)
 ├── bash (Python)
-├── user_settings.sh (Bash)
+├── commaNumber.py (Python)
+├── pwned.db (SQLite)
+├── pwnedpasswords.txt (Plain Text)
 ├── shared_functions.sh (Bash)
-└── txt_to_db.py (Python)
-└── txt_to_db_no_progress.py (Python)
+├── txt_to_db.py (Python)
+├── txt_to_db_no_progress.py (Python)
+└── user_settings.sh (Bash)
 ```
 
 ## Project Components
