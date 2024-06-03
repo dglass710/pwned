@@ -24,17 +24,20 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ```
 /path/to/your/project/
+├── ReadMe.md (Markdown)
 ├── Dockerfile (Dockerfile DSL)
 ├── HumanTime.py (Python)
 ├── commaNumber.py (Python)
 ├── pwned.db (SQLite)
 ├── pwnedpasswords.txt (Plain Text)
 ├── Update (Bash)
-├── bash (Python)
 ├── UpdateFull (Bash)
 ├── UpdatePartial (Bash)
+├── bash (Python)
 ├── user_settings.sh (Bash)
+├── shared_functions.sh (Bash)
 └── txt_to_db.py (Python)
+└── txt_to_db_no_progress.py (Python)
 ```
 
 ## Project Components
@@ -208,7 +211,45 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ### Automatic Update Process
 
-- The script automates the download of the latest passwords, rebuilding the database, building the Docker image, and pushing the updated image to Docker Hub.
+The project includes three scripts to automate the process of updating the database and Docker image:
+
+1. **Update (User interaction required)**:
+   - **Purpose**: Prompts the user to decide whether to download the latest password data and rebuild the database based on the timestamp of the existing database file.
+   - **Usage**: Run this script to interactively update the database and Docker image.
+   - **Steps**:
+     1. Ensures Docker is running.
+     2. Prompts the user to update the database based on its timestamp.
+     3. Downloads the latest passwords using HaveIBeenPwned/PwnedPasswordsDownloader.
+     4. Removes the old `pwned.db` file.
+     5. Runs `txt_to_db.py` to build a new `pwned.db` database.
+     6. Removes the `pwnedpasswords.txt` file after building the database.
+     7. Builds a new Docker image with the latest database.
+     8. Pushes the updated Docker image to Docker Hub.
+
+2. **UpdateFull (Always does a full update)**:
+   - **Purpose**: Automates the full process of downloading the latest passwords, rebuilding the database, and updating the Docker image.
+   - **Usage**: Run this script to ensure the latest data and image are always used.
+   - **Steps**:
+     1. Ensures Docker is running.
+     2. Downloads the latest passwords.
+     3. Removes the old `pwned.db` file.
+     4. Runs `txt_to_db.py` to build a new `pwned.db` database.
+     5. Removes the `pwnedpasswords.txt` file after building the database.
+     6. Builds a new Docker image with the latest database.
+     7. Pushes the updated Docker image to Docker Hub.
+
+3. **UpdatePartial (Only a rebase unless there is no pwned.db in the project directory)**:
+   - **Purpose**: Automates the process of updating the Docker image without downloading new passwords or rebuilding the database, unless the database does not exist.
+   - **Usage**: Run this script if you only need to update the Docker image and the database already exists.
+   - **Steps**:
+     1. Ensures Docker is running.
+     2. Checks if the `pwned.db` file exists.
+     3. If the `pwned.db` file does not exist:
+        - Downloads the latest passwords.
+        - Runs `txt_to_db.py` to build a new `pwned.db` database.
+        - Removes the `pwnedpasswords.txt` file after building the database.
+     4. Builds a new Docker image with the existing or newly created database.
+     5. Pushes the updated Docker image to Docker Hub.
 
 ### Manual Update Process
 
