@@ -43,6 +43,18 @@ build_database() {
     rm "$PASSWORD_FILE"
 }
 
+# Function to build the database with progress updates
+build_database_progress() {
+    log_message $SCRIPT_NAME "Generating database"
+    echo "Building the database..."
+    $PYTHON_PATH txt_to_db.py
+
+    # Remove the password file after building the database
+    log_message $SCRIPT_NAME "Removing latest passwords"
+    echo "Removing the password file..."
+    rm "$PASSWORD_FILE"
+}
+
 # Function to prune Docker images with a specific name
 prune_docker_images() {
     log_message $SCRIPT_NAME "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"

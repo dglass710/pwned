@@ -43,7 +43,7 @@ if [ -f "$DB_FILE" ]; then
     case "$choice" in
         y|Y )
             log_step_start "Downloading the latest passwords"
-            download_passwords
+            download_passwords_progress
             log_step_end "Downloading the latest passwords"
 
             log_message $SCRIPT_NAME "Removing old database"
