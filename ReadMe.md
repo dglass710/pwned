@@ -31,6 +31,9 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ├── pwnedpasswords.txt (Plain Text)
 ├── Update (Bash)
 ├── bash (Python)
+├── UpdateFull (Bash)
+├── UpdatePartial (Bash)
+├── user_settings.sh (Bash)
 └── txt_to_db.py (Python)
 ```
 
@@ -76,9 +79,10 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 6. **Update**
     - **Purpose**: Automates the process of updating the database and Docker image.
     - **Usage**: Run this script to download the latest passwords, rebuild the database, and create a new Docker image.
-    - **Configuration**: Users need to update two fields in this script:
+    - **Configuration**: Users need to update the `user_settings.sh` script for:
       - `PROJECT_DIR`: Absolute path to the project directory.
       - `DOCKER_IMAGE`: Name of the Docker image.
+      - `LOG_FILE`: Path to the log file.
     - **Steps**:
       1. Ensures Docker is running.
       2. Prompts the user to update the database based on its timestamp.
@@ -91,11 +95,44 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ![Update Script Visual](https://thedavidglass.com/assets/project_4/Update.jpg)
 
-7. **bash**
+7. **UpdateFull**
+    - **Purpose**: Automates the full process of downloading the latest passwords, rebuilding the database, and updating the Docker image.
+    - **Usage**: Run this script to ensure the latest data and image are always used.
+    - **Steps**:
+      1. Ensures Docker is running.
+      2. Downloads the latest passwords.
+      3. Removes the old `pwned.db` file.
+      4. Runs `txt_to_db.py` to build a new `pwned.db` database.
+      5. Removes the `pwnedpasswords.txt` file after building the database.
+      6. Builds a new Docker image with the latest database.
+      7. Pushes the updated Docker image to Docker Hub.
+
+8. **UpdatePartial**
+    - **Purpose**: Automates the process of updating the Docker image without downloading new passwords or rebuilding the database, unless the database does not exist.
+    - **Usage**: Run this script if you only need to update the Docker image and the database already exists.
+    - **Steps**:
+      1. Ensures Docker is running.
+      2. Checks if the `pwned.db` file exists.
+      3. If the `pwned.db` file does not exist:
+         - Downloads the latest passwords.
+         - Runs `txt_to_db.py` to build a new `pwned.db` database.
+         - Removes the `pwnedpasswords.txt` file after building the database.
+      4. Builds a new Docker image with the existing or newly created database.
+      5. Pushes the updated Docker image to Docker Hub.
+
+9. **user_settings.sh**
+    - **Purpose**: Configuration file containing constants and functions shared by all scripts.
+    - **Contents**:
+      - `PROJECT_DIR`: Absolute path to the project directory.
+      - `DOCKER_IMAGE`: Name of the Docker image.
+      - `LOG_FILE`: Path to the log file.
+      - `log_message()`: Function to log messages with a timestamp and script name.
+
+10. **bash**
     - **Purpose**: Main script to interactively check if a password has been compromised.
     - **Usage**: This script is run within the Docker container to query the pwned.db database.
     - **Naming Reason**: Named `bash` because the Dockerfile sets this script as the entry point, replacing the typical bash shell.
-    - Steps:
+    - **Steps**:
         1. Checks if the script has run previously in the current container by looking for the ran_previously file in the /pwned/ directory.
         2. If not run previously, it creates the ran_previously file and displays a message indicating the preparation of the database.
         3. Connects to the pwned.db database.
@@ -107,7 +144,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ![Main Application Visual](https://thedavidglass.com/assets/project_4/Main-Application.jpg)
 
-8. **txt_to_db.py**
+11. **txt_to_db.py**
     - **Purpose**: Script to create and populate the `pwned.db` database from the `pwnedpasswords.txt` file.
     - **Usage**: Converts the text file into a SQLite database for fast querying.
     - **Steps**:
@@ -128,15 +165,16 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ### Configuration
 
-- Open the `Update` script in a text editor.
+- Open the `user_settings.sh` script in a text editor.
 - Set the `PROJECT_DIR` variable to the absolute path of your project directory.
 - Set the `DOCKER_IMAGE` variable to the desired name for your Docker image.
+- Set the `LOG_FILE` variable to the desired path for your log file.
 
 ### Running the Script
 
-- Open a terminal and navigate to any directory.
-- Make the script executable: `chmod +x /path/to/your/project/Update`
-- Run the script: `./path/to/your/project/Update`
+- Open a terminal and navigate to the project directory.
+- Make the script executable: `chmod +x Update UpdateFull UpdatePartial`
+- Run the script: `./Update` or `./UpdateFull` or `./UpdatePartial`
 - Follow the prompts to update the database and build the Docker image.
 
 ### Running the Docker Container
