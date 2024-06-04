@@ -23,7 +23,7 @@ PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
 DOCKERFILE_PATH="Dockerfile"
 
 # Log message
-log_message $SCRIPT_NAME "Starting execution"
+log_step_start "execution"
 
 # Change to the Project Directory
 cd $PROJECT_DIR
@@ -69,5 +69,5 @@ echo "Pushing Docker image to Docker Hub..."
 docker push "$DOCKER_IMAGE"
 log_step_end "Pushing Docker image to Docker Hub"
 
-log_message $SCRIPT_NAME "Update script completed successfully"
+log_step_end "execution"
 echo "Update script completed successfully."
