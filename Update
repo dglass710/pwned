@@ -22,7 +22,7 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 SCRIPT_NAME="Update"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
-DB_FILE="pwned.db"
+DB_FILE="$PROJECT_DIR/pwned.db"
 PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
 DOCKERFILE_PATH="Dockerfile"
 
@@ -36,41 +36,14 @@ cd $PROJECT_DIR
 echo "Starting Docker if it's not already running..."
 open /Applications/Docker.app
 
-# Check if the database file already exists
-if [ -f "$DB_FILE" ]; then
-    last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
-    read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
-    case "$choice" in
-        y|Y )
-            log_step_start "Downloading the latest passwords"
-            download_passwords
-            log_step_end "Downloading the latest passwords"
+# Function to perform a full update
+full_update() {
+    if [ -f "$DB_FILE" ]; then
+        log_message $SCRIPT_NAME "Removing old database"
+        echo "Removing old database..."
+        rm "$DB_FILE"
+    fi
 
-            log_message $SCRIPT_NAME "Removing old database"
-            echo "Removing old database..."
-            rm "$DB_FILE"
-
-            log_step_start "Building the database"
-            build_database_progress
-            log_step_end "Building the database"
-            ;;
-        n|N )
-            log_message $SCRIPT_NAME "Skipping download and database rebuild"
-            echo "Skipping download and database rebuild."
-
-            log_message $SCRIPT_NAME "Pausing to ensure Docker is started"
-            echo "Now pausing to ensure Docker is started."
-            sleep 5  # Wait for Docker to start
-            ;;
-        * )
-            log_message $SCRIPT_NAME "Invalid choice. Exiting"
-            echo "Invalid choice. Exiting."
-            exit 1
-            ;;
-    esac
-else
-    log_message $SCRIPT_NAME "No existing database found. Creating a new one"
-    echo "No existing database found. Creating a new one."
     log_step_start "Downloading the latest passwords"
     download_passwords
     log_step_end "Downloading the latest passwords"
@@ -79,22 +52,95 @@ else
     build_database
     log_step_end "Building the database"
     remove_passwords
+
+    prune_docker_images
+
+    log_step_start "Building Docker image"
+    echo "Building Docker image..."
+    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
+    log_step_end "Building Docker image"
+
+    log_step_start "Pushing Docker image to Docker Hub"
+    echo "Pushing Docker image to Docker Hub..."
+    docker push "$DOCKER_IMAGE"
+    log_step_end "Pushing Docker image to Docker Hub"
+
+    log_step_end "Execution"
+    echo "Update script completed successfully."
+}
+
+# Function to perform a partial update
+partial_update() {
+    if [ ! -f "$DB_FILE" ]; then
+        log_message $SCRIPT_NAME "No existing database found. Downloading passwords and building database."
+        echo "No existing database found. Downloading passwords and building database."
+
+        log_step_start "Downloading the latest passwords"
+        download_passwords
+        log_step_end "Downloading the latest passwords"
+
+        log_step_start "Building the database"
+        build_database
+        log_step_end "Building the database"
+        remove_passwords
+    else
+        echo "Now pausing to ensure Docker is started."
+        sleep 5  # Wait for Docker to start
+    fi
+
+    prune_docker_images
+
+    log_step_start "Building Docker image"
+    echo "Building Docker image..."
+    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
+    log_step_end "Building Docker image"
+
+    log_step_start "Pushing Docker image to Docker Hub"
+    echo "Pushing Docker image to Docker Hub..."
+    docker push "$DOCKER_IMAGE"
+    log_step_end "Pushing Docker image to Docker Hub"
+
+    log_step_end "Execution"
+    echo "Update script completed successfully."
+}
+
+# Main script logic based on the argument
+if [ $# -eq 0 ]; then
+    # Default behavior (check for database and prompt the user if it exists)
+    if [ -f "$DB_FILE" ]; then
+        last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
+        read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
+        case "$choice" in
+            y|Y )
+                full_update
+                ;;
+            n|N )
+                log_message $SCRIPT_NAME "Skipping download and database rebuild"
+                echo "Skipping download and database rebuild."
+                echo "Now pausing to ensure Docker is started."
+                sleep 5  # Wait for Docker to start
+                ;;
+            * )
+                log_message $SCRIPT_NAME "Invalid choice. Exiting"
+                echo "Invalid choice. Exiting."
+                exit 1
+                ;;
+        esac
+    else
+        log_message $SCRIPT_NAME "No existing database found. Creating a new one"
+        echo "No existing database found. Creating a new one."
+        full_update
+    fi
+elif [[ "$1" =~ ^[fF] ]]; then
+    # Full update
+    full_update
+elif [[ "$1" =~ ^[pP] ]]; then
+    # Partial update
+    partial_update
+else
+    echo "Invalid argument. Use 'f' for full update or 'p' for partial update."
+    exit 1
 fi
 
-# Prune Docker images with the specified name
-prune_docker_images
-
-log_step_start "Building Docker image"
-# Build the Docker image according to the Dockerfile
-echo "Building Docker image..."
-docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
-log_step_end "Building Docker image"
-
-log_step_start "Pushing Docker image to Docker Hub"
-# Push the updated image to Docker Hub
-echo "Pushing Docker image to Docker Hub..."
-docker push "$DOCKER_IMAGE"
-log_step_end "Pushing Docker image to Docker Hub"
-
+# Log the end of the script execution
 log_step_end "Execution"
-echo "Update script completed successfully."
