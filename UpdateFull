@@ -49,6 +49,7 @@ log_step_end "Downloading the latest passwords"
 log_step_start "Building the database"
 build_database
 log_step_end "Building the database"
+remove_passwords
 
 # Prune Docker images with the specified name
 prune_docker_images

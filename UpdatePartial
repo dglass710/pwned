@@ -50,6 +50,7 @@ if [ ! -f "$DB_FILE" ]; then
     log_step_start "Building the database"
     build_database
     log_step_end "Building the database"
+    remove_passwords
 else
     pause_for_docker
 fi

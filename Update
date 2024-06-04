@@ -78,6 +78,7 @@ else
     log_step_start "Building the database"
     build_database
     log_step_end "Building the database"
+    remove_passwords
 fi
 
 # Prune Docker images with the specified name
