@@ -65,5 +65,5 @@ echo "Pushing Docker image to Docker Hub..."
 docker push "$DOCKER_IMAGE"
 log_step_end "Pushing Docker image to Docker Hub"
 
-log_step_end "Execution" "long"
+log_step_end "Execution"
 echo "Update script completed successfully."

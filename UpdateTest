@@ -52,4 +52,4 @@ fi
 echo n | "$PROJECT_DIR/Update"
 
 # Log the end of the test
-log_step_end "Test" "long"
+log_step_end "Test"

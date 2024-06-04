@@ -17,7 +17,6 @@ log_step_start() {
 # Function to end logging a step with timing
 log_step_end() {
     local step="$1"
-    local format="${2:-long}"
     local start_time=$(cat "/tmp/${step}_start_time")
     local end_time=$(date +"%s")
     local duration=$((end_time - start_time))
@@ -26,7 +25,7 @@ log_step_end() {
     local minutes=$(( (duration % 3600) / 60))
     local seconds=$((duration % 60))
     
-    if [ "$format" == "long" ]; then
+    if [ duration >= 3600 ]; then
     	log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
     else
     	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
