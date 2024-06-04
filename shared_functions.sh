@@ -35,7 +35,6 @@ download_passwords() {
 
 # Function to build the database
 build_database() {
-    log_message $SCRIPT_NAME "Generating database"
     echo "Building the database..."
     $PYTHON_PATH txt_to_db_no_progress.py
 
@@ -47,7 +46,6 @@ build_database() {
 
 # Function to build the database with progress updates
 build_database_progress() {
-    log_message $SCRIPT_NAME "Generating database"
     echo "Building the database..."
     $PYTHON_PATH txt_to_db.py
 
