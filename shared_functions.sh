@@ -20,7 +20,9 @@ log_step_end() {
     local start_time=$(cat "/tmp/${step}_start_time")
     local end_time=$(date +"%s")
     local duration=$((end_time - start_time))
-    log_message $SCRIPT_NAME "Completed $step in ${duration} seconds"
+    local minutes=$((duration / 60))
+    local seconds=$((duration % 60))
+    log_message $SCRIPT_NAME "Completed $step in ${minutes} minutes and ${seconds} seconds"
     rm "/tmp/${step}_start_time"
 }
 
