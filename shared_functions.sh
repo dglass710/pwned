@@ -25,7 +25,7 @@ log_step_end() {
     local minutes=$(( (duration % 3600) / 60))
     local seconds=$((duration % 60))
     
-    if [ duration >= 3600 ]; then
+    if [ $duration -ge 3600 ]; then
     	log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
     else
     	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
