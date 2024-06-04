@@ -4,19 +4,52 @@
 source "$(dirname "$0")/user_settings.sh"
 source "$(dirname "$0")/shared_functions.sh"
 
+set -e  # Exit immediately if a command exits with a non-zero status.
+
 # Define the script name for logging
 SCRIPT_NAME="UpdateTest"
+
+# Ensure paths are absolute
+DB_FILE="$PROJECT_DIR/pwned.db"
 
 # Log the start of the test
 log_step_start "Test"
 
-# Run the update scripts
-echo n | ./Update
-./UpdatePartial
-./UpdateFull
-rm pwned.db
-./UpdatePartial
-echo y | ./Update
+# Step 1: Remove the database file to ensure the next `Update` script creates a new one
+# This ensures that the next run of the Update script starts with a clean state.
+if [ -f "$DB_FILE" ]; then
+    rm "$DB_FILE"
+fi
+
+# Step 2: Run `Update` without the database file
+# Since the database file does not exist, the Update script will create a new one without prompting the user.
+"$PROJECT_DIR/Update"
+
+# Step 3: Run `UpdatePartial` - it should find the database from step 2
+# This ensures that the UpdatePartial script correctly handles the presence of an existing database.
+"$PROJECT_DIR/UpdatePartial"
+
+# Step 4: Simulate user input to download the latest passwords and rebuild the database
+# This tests the Update script's behavior when the user chooses to update the database.
+echo y | "$PROJECT_DIR/Update"
+
+# Step 5: Always perform a full update
+# This ensures that the UpdateFull script performs a complete update, regardless of the existing state.
+"$PROJECT_DIR/UpdateFull"
+
+# Step 6: Remove the database file again to test the next script in a fresh state
+# This ensures that the next run of the UpdatePartial script starts with a clean state.
+if [ -f "$DB_FILE" ]; then
+    rm "$DB_FILE"
+fi
+
+# Step 7: Run `UpdatePartial` again to ensure it correctly handles the absence of the database file
+# This tests the UpdatePartial script's behavior when there is no existing database.
+"$PROJECT_DIR/UpdatePartial"
+
+# Step 8: Simulate user input to skip downloading the latest passwords and rebuilding the database
+# This tests the Update script's behavior when the user chooses not to update the database.
+echo n | "$PROJECT_DIR/Update"
 
 # Log the end of the test
 log_step_end "Test" "long"

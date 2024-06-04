@@ -10,7 +10,7 @@ log_message() {
 # Function to start logging a step with timing
 log_step_start() {
     local step="$1"
-    log_message $SCRIPT_NAME "Starting $step"
+    log_message $SCRIPT_NAME "Started $step"
     echo "$(date +"%s")" > "/tmp/${step}_start_time"
 }
 
@@ -26,10 +26,10 @@ log_step_end() {
     local minutes=$(( (duration % 3600) / 60))
     local seconds=$((duration % 60))
     
-    if [ "$format" == "short" ]; then
-    	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
-    else
+    if [ "$format" == "long" ]; then
     	log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
+    else
+    	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
     fi
     
     rm "/tmp/${step}_start_time"
