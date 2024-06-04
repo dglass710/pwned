@@ -37,7 +37,6 @@ log_step_end() {
 
 # Function to download the latest passwords
 download_passwords() {
-    log_message $SCRIPT_NAME "Downloading the latest passwords"
     echo "Downloading the latest passwords..."
     haveibeenpwned-downloader "$PASSWORD_BASENAME" -o -p 64 # You can get this tool at github.com/HaveIBeenPwned/PwnedPasswordsDownloader
 }
