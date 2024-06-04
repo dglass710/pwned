@@ -1,0 +1,22 @@
+#! /bin/bash
+
+# Source the configuration and shared functions files
+source "$(dirname "$0")/user_settings.sh"
+source "$(dirname "$0")/shared_functions.sh"
+
+# Define the script name for logging
+SCRIPT_NAME="UpdateTest"
+
+# Log the start of the test
+log_step_start "Test"
+
+# Run the update scripts
+echo n | ./Update
+./UpdatePartial
+./UpdateFull
+rm pwned.db
+./UpdatePartial
+echo y | ./Update
+
+# Log the end of the test
+log_step_end "Test" "long"

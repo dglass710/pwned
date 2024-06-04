@@ -17,13 +17,23 @@ log_step_start() {
 # Function to end logging a step with timing
 log_step_end() {
     local step="$1"
+    local format="${2:-long}"
     local start_time=$(cat "/tmp/${step}_start_time")
     local end_time=$(date +"%s")
     local duration=$((end_time - start_time))
-    local minutes=$((duration / 60))
+    local total_minutes=$((duration / 60))
+    local hours=$((duration / 3600))
+    local minutes=$(( (duration % 3600) / 60))
     local seconds=$((duration % 60))
-    log_message $SCRIPT_NAME "Completed $step in ${minutes} minutes and ${seconds} seconds"
+    
+    if [ "$format" == "short" ]; then
+    	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
+    else
+    	log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
+    fi
+    
     rm "/tmp/${step}_start_time"
+    echo "$(date +"%s")" > "/tmp/${step}_start_time"
 }
 
 # Function to download the latest passwords
