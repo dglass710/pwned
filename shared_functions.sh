@@ -4,6 +4,7 @@
 log_message() {
     local script_name="$1"
     local message="$2"
+    script_name=$(echo "$script_name" | sed 's/_/ /g')
     echo "$(date +"%Y-%m-%d %H:%M:%S") [$script_name] $message" >> $LOG_FILE
 }
 
@@ -26,9 +27,9 @@ log_step_end() {
     local seconds=$((duration % 60))
 
     if [ $duration -ge 3600 ]; then
-	    log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
+        log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
     else
-	    log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
+        log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
     fi
 
     rm "/tmp/${step}_start_time"
@@ -80,4 +81,3 @@ prune_docker_images() {
         echo "No images to remove for the name '${DOCKER_IMAGE%%:*}'"
     fi
 }
-
