@@ -19,7 +19,8 @@ source "$(dirname "$0")/shared_functions.sh"
 
 set -e  # Exit immediately if a command exits with a non-zero status.
 
-SCRIPT_NAME="Update"
+# Include command line arguments in the script name for logging
+SCRIPT_NAME="Update $*"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="$PROJECT_DIR/pwned.db"
