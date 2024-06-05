@@ -65,21 +65,19 @@ build_database_progress() {
     rm "$PASSWORD_FILE"
 }
 
-# Function to prune Docker images with a specific name
+# Function to prune Docker images with a specific name, keeping only the latest tagged image
 prune_docker_images() {
     log_message $SCRIPT_NAME "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
     echo "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
 
-    # Get the list of image IDs with the specified name, sorted by creation date (most recent first)
-    image_ids=$(docker images --filter=reference="${DOCKER_IMAGE%%:*}:*" --format '{{.ID}}' | sort | uniq)
+    # Get all image IDs with the specified name, ignoring the first one (the latest image)
+    images_to_remove=$(docker image ls | grep "${DOCKER_IMAGE%%:*}" | tail -n +2 | awk '{print $3}')
 
-    # Get the latest image ID
-    latest_image_id=$(docker images --filter=reference="${DOCKER_IMAGE%%:*}:latest" --format '{{.ID}}')
-
-    # Remove all images except the latest one
-    for image_id in $image_ids; do
-        if [ "$image_id" != "$latest_image_id" ]; then
-            docker rmi -f $image_id
-        fi
-    done
+    if [ -n "$images_to_remove" ]; then
+        # Remove the images
+        docker rmi -f $images_to_remove
+    else
+        echo "No images to remove for the name '${DOCKER_IMAGE%%:*}'"
+    fi
 }
+
