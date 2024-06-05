@@ -19,8 +19,12 @@ source "$(dirname "$0")/shared_functions.sh"
 
 set -e  # Exit immediately if a command exits with a non-zero status.
 
-# Include command line arguments in the script name for logging
-SCRIPT_NAME="Update $*"
+# Join all command-line arguments into a single string
+ARGS="$*"
+
+# Define SCRIPT_NAME to include all arguments
+SCRIPT_NAME="Update${ARGS:+_$ARGS}"
+
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="$PROJECT_DIR/pwned.db"
@@ -37,7 +41,7 @@ cd $PROJECT_DIR
 echo "Starting Docker if it's not already running..."
 open /Applications/Docker.app
 
-# Function to perform Docker image tasks
+# Function to perform Docker tasks
 docker_tasks() {
     prune_docker_images
 
@@ -50,6 +54,8 @@ docker_tasks() {
     echo "Pushing Docker image to Docker Hub..."
     docker push "$DOCKER_IMAGE"
     log_step_end "Pushing Docker image to Docker Hub"
+
+    echo "Update script completed successfully."
 }
 
 # Function to perform a full update
@@ -69,27 +75,21 @@ full_update() {
     log_step_end "Building the database"
     remove_passwords
 
-    # Call docker_tasks to handle Docker image tasks
     docker_tasks
-
-    log_step_end "Execution"
-    echo "Update script completed successfully."
 }
 
 # Function to perform a partial update
 partial_update() {
     if [ ! -f "$DB_FILE" ]; then
+        log_message $SCRIPT_NAME "No existing database found. Downloading passwords and building database."
+        echo "No existing database found. Downloading passwords and building database."
+
         full_update
     else
         echo "Now pausing to ensure Docker is started."
         sleep 5  # Wait for Docker to start
-
-        # Call docker_tasks to handle Docker image tasks
         docker_tasks
-
-        log_step_end "Execution"
-        echo "Update script completed successfully."
-    fi
+    }
 }
 
 # Main script logic based on the argument
@@ -107,8 +107,6 @@ if [ $# -eq 0 ]; then
                 echo "Skipping download and database rebuild."
                 echo "Now pausing to ensure Docker is started."
                 sleep 5  # Wait for Docker to start
-
-                # Call docker_tasks to handle Docker image tasks
                 docker_tasks
                 ;;
             * )
