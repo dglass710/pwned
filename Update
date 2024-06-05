@@ -96,8 +96,10 @@ partial_update() {
 if [ $# -eq 0 ]; then
     # Default behavior (check for database and prompt the user if it exists)
     if [ -f "$DB_FILE" ]; then
+        log_message $SCRIPT_NAME "Prompting user to see if they would like to replace the existing database"
         last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
         read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
+        log_message $SCRIPT_NAME "User response: $choice"
         case "$choice" in
             y|Y )
                 full_update
