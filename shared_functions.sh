@@ -24,13 +24,13 @@ log_step_end() {
     local hours=$((duration / 3600))
     local minutes=$(( (duration % 3600) / 60))
     local seconds=$((duration % 60))
-    
+
     if [ $duration -ge 3600 ]; then
-    	log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
+	    log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds"
     else
-    	log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
+	    log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds"
     fi
-    
+
     rm "/tmp/${step}_start_time"
     echo "$(date +"%s")" > "/tmp/${step}_start_time"
 }
@@ -70,13 +70,16 @@ prune_docker_images() {
     log_message $SCRIPT_NAME "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
     echo "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
 
-    # Get the list of image IDs with the specified name
-    image_ids=$(docker images --filter=reference="${DOCKER_IMAGE%%:*}:*" --format '{{.ID}}')
+    # Get the list of image IDs with the specified name, sorted by creation date (most recent first)
+    image_ids=$(docker images --filter=reference="${DOCKER_IMAGE%%:*}:*" --format '{{.ID}}' | sort | uniq)
 
-    if [ -n "$image_ids" ]; then
-        # Remove the images
-        docker rmi -f $image_ids
-    else
-        echo "No images found with the name '${DOCKER_IMAGE%%:*}'"
-    fi
+    # Get the latest image ID
+    latest_image_id=$(docker images --filter=reference="${DOCKER_IMAGE%%:*}:latest" --format '{{.ID}}')
+
+    # Remove all images except the latest one
+    for image_id in $image_ids; do
+        if [ "$image_id" != "$latest_image_id" ]; then
+            docker rmi -f $image_id
+        fi
+    done
 }

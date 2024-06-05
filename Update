@@ -36,6 +36,21 @@ cd $PROJECT_DIR
 echo "Starting Docker if it's not already running..."
 open /Applications/Docker.app
 
+# Function to perform Docker image tasks
+docker_tasks() {
+    prune_docker_images
+
+    log_step_start "Building Docker image"
+    echo "Building Docker image..."
+    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
+    log_step_end "Building Docker image"
+
+    log_step_start "Pushing Docker image to Docker Hub"
+    echo "Pushing Docker image to Docker Hub..."
+    docker push "$DOCKER_IMAGE"
+    log_step_end "Pushing Docker image to Docker Hub"
+}
+
 # Function to perform a full update
 full_update() {
     if [ -f "$DB_FILE" ]; then
@@ -53,17 +68,8 @@ full_update() {
     log_step_end "Building the database"
     remove_passwords
 
-    prune_docker_images
-
-    log_step_start "Building Docker image"
-    echo "Building Docker image..."
-    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
-    log_step_end "Building Docker image"
-
-    log_step_start "Pushing Docker image to Docker Hub"
-    echo "Pushing Docker image to Docker Hub..."
-    docker push "$DOCKER_IMAGE"
-    log_step_end "Pushing Docker image to Docker Hub"
+    # Call docker_tasks to handle Docker image tasks
+    docker_tasks
 
     log_step_end "Execution"
     echo "Update script completed successfully."
@@ -72,36 +78,17 @@ full_update() {
 # Function to perform a partial update
 partial_update() {
     if [ ! -f "$DB_FILE" ]; then
-        log_message $SCRIPT_NAME "No existing database found. Downloading passwords and building database."
-        echo "No existing database found. Downloading passwords and building database."
-
-        log_step_start "Downloading the latest passwords"
-        download_passwords
-        log_step_end "Downloading the latest passwords"
-
-        log_step_start "Building the database"
-        build_database
-        log_step_end "Building the database"
-        remove_passwords
+        full_update
     else
         echo "Now pausing to ensure Docker is started."
         sleep 5  # Wait for Docker to start
+
+        # Call docker_tasks to handle Docker image tasks
+        docker_tasks
+
+        log_step_end "Execution"
+        echo "Update script completed successfully."
     fi
-
-    prune_docker_images
-
-    log_step_start "Building Docker image"
-    echo "Building Docker image..."
-    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
-    log_step_end "Building Docker image"
-
-    log_step_start "Pushing Docker image to Docker Hub"
-    echo "Pushing Docker image to Docker Hub..."
-    docker push "$DOCKER_IMAGE"
-    log_step_end "Pushing Docker image to Docker Hub"
-
-    log_step_end "Execution"
-    echo "Update script completed successfully."
 }
 
 # Main script logic based on the argument
@@ -119,6 +106,9 @@ if [ $# -eq 0 ]; then
                 echo "Skipping download and database rebuild."
                 echo "Now pausing to ensure Docker is started."
                 sleep 5  # Wait for Docker to start
+
+                # Call docker_tasks to handle Docker image tasks
+                docker_tasks
                 ;;
             * )
                 log_message $SCRIPT_NAME "Invalid choice. Exiting"
