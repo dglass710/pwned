@@ -50,7 +50,7 @@ build_database() {
 
 # Remove the password file after building the database
 remove_passwords() {
-    log_message $SCRIPT_NAME "Removing latest passwords"
+    log_message $SCRIPT_NAME "Removing latest passwords."
     echo "Removing the password file..."
     rm "$PASSWORD_FILE"
 }
@@ -61,14 +61,14 @@ build_database_progress() {
     $PYTHON_PATH txt_to_db.py
 
     # Remove the password file after building the database
-    log_message $SCRIPT_NAME "Removing latest passwords"
+    log_message $SCRIPT_NAME "Removing latest passwords."
     echo "Removing the password file..."
     rm "$PASSWORD_FILE"
 }
 
 # Function to prune Docker images with a specific name, keeping only the latest tagged image
 prune_docker_images() {
-    log_message $SCRIPT_NAME "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
+    log_message $SCRIPT_NAME "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'."
     echo "Pruning Docker images with name '${DOCKER_IMAGE%%:*}'"
 
     # Get all image IDs with the specified name, ignoring the first one (the latest image)
