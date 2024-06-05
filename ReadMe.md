@@ -36,7 +36,8 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ├── shared_functions.sh (Bash)
 ├── txt_to_db.py (Python)
 ├── txt_to_db_no_progress.py (Python)
-└── user_settings.sh (Bash)
+├── user_settings.sh (Bash)
+└── updates.log (Log File)
 ```
 
 ## Project Components
@@ -97,7 +98,20 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ![Update Script Visual](https://thedavidglass.com/assets/project_4/Update.jpg)
 
-7. **user_settings.sh**
+7. **UpdateTest**
+    - **Purpose**: Provides a comprehensive test of the update processes.
+    - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
+    - **Steps**:
+      1. Removes the existing database file.
+      2. Runs `Update` without the database file.
+      3. Runs `Update` with partial update.
+      4. Simulates user input to update the database.
+      5. Always performs a full update.
+      6. Removes the database file again.
+      7. Runs `Update` with partial update to ensure it handles the absence of the database file.
+      8. Simulates user input to skip updating the database.
+
+8. **user_settings.sh**
     - **Purpose**: Configuration file containing constants and functions shared by all scripts.
     - **Contents**:
       - `PROJECT_DIR`: Absolute path to the project directory.
@@ -105,30 +119,17 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       - `LOG_FILE`: Path to the log file.
       - `log_message()`: Function to log messages with a timestamp and script name.
 
-8. **shared_functions.sh**
-    - **Purpose**: Contains functions shared by all scripts.
+9. **shared_functions.sh**
+    - **Purpose**: Contains functions shared by the update and test scripts.
     - **Functions**:
       - `log_message()`: Logs messages with a timestamp and script name.
-      - `log_step_start()`: Starts logging a step with timing.
-      - `log_step_end()`: Ends logging a step with timing.
+      - `log_step_start()`: Logs the start of a step with timing.
+      - `log_step_end()`: Logs the end of a step with timing.
       - `download_passwords()`: Downloads the latest passwords.
       - `build_database()`: Builds the database.
-      - `remove_passwords()`: Removes the password file.
+      - `remove_passwords()`: Removes the password file after building the database.
       - `build_database_progress()`: Builds the database with progress updates.
-      - `prune_docker_images()`: Prunes Docker images with a specific name.
-
-9. **UpdateTest**
-    - **Purpose**: Script to test all possible update scenarios using the `Update` script.
-    - **Usage**: Run this script to ensure all update scenarios are tested.
-    - **Steps**:
-      1. Remove the database file.
-      2. Run `Update` to create a new database file.
-      3. Run `Update` with partial update to check for existing database.
-      4. Simulate user input to download the latest passwords and rebuild the database.
-      5. Run `Update` with full update to ensure a complete update.
-      6. Remove the database file again for a fresh state.
-      7. Run `Update` with partial update to ensure correct behavior without a database file.
-      8. Simulate user input to skip downloading the latest passwords and rebuilding the database.
+      - `prune_docker_images()`: Prunes Docker images, keeping only the latest tagged image.
 
 10. **bash**
     - **Purpose**: Main script to interactively check if a password has been compromised.
@@ -175,8 +176,8 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ### Running the Script
 
 - Open a terminal and navigate to the project directory.
-- Make the script executable: `chmod +x Update`
-- Run the script: `./Update` or `./Update f` for a full update or `./Update p` for a partial update
+- Make the script executable: `chmod +x Update UpdateTest`
+- Run the script: `./Update` or `./UpdateTest`
 - Follow the prompts to update the database and build the Docker image.
 
 ### Running the Docker Container
@@ -210,7 +211,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 ### Automatic Update Process
 
-The project includes a unified `Update` script to automate the process of updating the database and Docker image:
+The project includes scripts to automate the process of updating the database and Docker image:
 
 1. **Update (User interaction required)**:
    - **Purpose**: Prompts the user to decide whether to download the latest password data and rebuild the database based on the timestamp of the existing database file.
@@ -225,30 +226,18 @@ The project includes a unified `Update` script to automate the process of updati
      7. Builds a new Docker image with the latest database.
      8. Pushes the updated Docker image to Docker Hub.
 
-2. **Update (Full update)**:
-   - **Purpose**: Automates the full process of downloading the latest passwords, rebuilding the database, and updating the Docker image.
-   - **Usage**: Run this script with `f` as an argument to ensure the latest data and image are always used.
+2. **UpdateTest (Comprehensive testing)**:
+   - **Purpose**: Provides a comprehensive test of the update processes.
+   - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
    - **Steps**:
-     1. Ensures Docker is running.
-     2. Downloads the latest passwords.
-     3. Removes the old `pwned.db` file.
-     4. Runs `txt_to_db.py` to build a new `pwned.db` database.
-     5. Removes the `pwnedpasswords.txt` file after building the database.
-     6. Builds a new Docker image with the latest database.
-     7. Pushes the updated Docker image to Docker Hub.
-
-3. **Update (Partial update)**:
-   - **Purpose**: Automates the process of updating the Docker image without downloading new passwords or rebuilding the database, unless the database does not exist.
-   - **Usage**: Run this script with `p` as an argument if you only need to update the Docker image and the database already exists.
-   - **Steps**:
-     1. Ensures Docker is running.
-     2. Checks if the `pwned.db` file exists.
-     3. If the `pwned.db` file does not exist:
-        - Downloads the latest passwords.
-        - Runs `txt_to_db.py` to build a new `pwned.db` database.
-        - Removes the `pwnedpasswords.txt` file after building the database.
-     4. Builds a new Docker image with the existing or newly created database.
-     5. Pushes the updated Docker image to Docker Hub.
+     1. Removes the existing database file.
+     2. Runs `Update` without the database file.
+     3. Runs `Update` with partial update.
+     4. Simulates user input to update the database.
+     5. Always performs a full update.
+     6. Removes the database file again.
+     7. Runs `Update` with partial update to ensure it handles the absence of the database file.
+     8. Simulates user input to skip updating the database.
 
 ### Manual Update Process
 
