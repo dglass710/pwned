@@ -242,9 +242,9 @@ The project includes scripts to automate the process of updating the database an
     - **Steps**:
       1. Removes the existing database file if it exists.
       2. Runs `Update` without the database file to create a new one.
-      3. Runs `Update` with partial update to check handling with the database present.
+      3. Runs `Update` with the partial update option to check handling with the database present.
       4. Runs `Update` simulating user input to update the database.
-      5. Runs `Update` with a full update regardless of the existing state.
+      5. Runs `Update` with the full update option to verify it recreates the existing database.
       6. Removes the database file again (only if it exists but it should exist due to the previous step).
       7. Runs `Update` with partial update to ensure it handles the absence of the database file.
       8. Runs `Update` simulating user input to skip updating the database.
