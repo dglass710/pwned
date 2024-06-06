@@ -1,6 +1,7 @@
-# user_settings.sh
+# Dynamically set the project directory to the directory of this script
+PROJECT_DIR="$(dirname "$0")"
 
 # Define constants
-PROJECT_DIR="/Users/dag/Dropbox/Documents/Docker/pwned"
 DOCKER_IMAGE="dglass710/pwned"
-LOG_FILE="updates.log"
+LOG_FILE="$PROJECT_DIR/updates.log"
+
