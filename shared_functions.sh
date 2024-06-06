@@ -11,8 +11,8 @@ log_message() {
 # Function to start logging a step with timing
 log_step_start() {
     local step="$1"
-    log_message $SCRIPT_NAME "Started $step"
-    echo "$(date +"%s")" > "/tmp/${step}_start_time."
+    log_message $SCRIPT_NAME "Started $step."
+    echo "$(date +"%s")" > "/tmp/${step}_start_time"
 }
 
 # Function to end logging a step with timing
