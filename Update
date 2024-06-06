@@ -72,6 +72,7 @@ full_update() {
     log_step_start "Building the database"
     build_database
     log_step_end "Building the database"
+    log_message $SCRIPT_NAME "The new database has checksum: $(shasum "$PROJECT_DIR/pwned.db" | awk '{print $1}')"
     remove_passwords
 
     docker_tasks
