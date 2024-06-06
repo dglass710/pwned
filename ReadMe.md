@@ -85,6 +85,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       - `PROJECT_DIR`: Absolute path to the project directory.
       - `DOCKER_IMAGE`: Name of the Docker image.
       - `LOG_FILE`: Path to the log file.
+      - `PYTHON_PATH`: Path to the `python` executable. You can get this by running `which python3` or `which python`.
     - **Steps**:
       1. Ensures Docker is running.
       2. Accepts command line arguments to determine the type of update:
