@@ -91,9 +91,8 @@ partial_update() {
     fi
 }
 
-# Main script logic based on the argument
-if [ $# -eq 0 ]; then
-    # Default behavior (check for database and prompt the user if it exists)
+# Function to handle the default behavior (with or without an invalid argument)
+default_behavior() {
     if [ -f "$DB_FILE" ]; then
         log_message $SCRIPT_NAME "Prompting user to see if they would like to replace the existing database."
         last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
@@ -121,6 +120,12 @@ if [ $# -eq 0 ]; then
         echo "No existing database found. Creating a new one."
         full_update
     fi
+}
+
+# Main script logic based on the argument
+if [ $# -eq 0 ]; then
+    # Default behavior (check for database and prompt the user if it exists)
+    default_behavior
 elif [[ "$1" =~ ^[fF] ]]; then
     # Full update
     full_update
@@ -128,8 +133,8 @@ elif [[ "$1" =~ ^[pP] ]]; then
     # Partial update
     partial_update
 else
-    echo "Invalid argument. Use 'f' for full update or 'p' for partial update."
-    exit 1
+    # Treat any other argument as default behavior
+    default_behavior
 fi
 
 # Log the end of the script execution

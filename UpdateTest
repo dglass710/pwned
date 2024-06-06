@@ -26,19 +26,19 @@ fi
 
 # Step 2: Run `Update` without the database file
 # Since the database file does not exist, the Update script will create a new one without prompting the user.
-"$PROJECT_DIR/Update"
+"$PROJECT_DIR/Update" 1 of 6
 
 # Step 3: Run `Update` with partial update - it should find the database from step 2
 # This ensures that the partial update correctly handles the presence of an existing database.
-"$PROJECT_DIR/Update" Partial With Database
+"$PROJECT_DIR/Update" Partial With Database 2 of 6 
 
 # Step 4: Simulate user input to download the latest passwords and rebuild the database
 # This tests the Update script's behavior when the user chooses to update the database.
-echo y | "$PROJECT_DIR/Update"
+echo y | "$PROJECT_DIR/Update" 3 of 6
 
 # Step 5: Always perform a full update
 # This ensures that the full update script performs a complete update, regardless of the existing state.
-"$PROJECT_DIR/Update" Full With Database
+"$PROJECT_DIR/Update" Full With Database 4 of 6
 
 # Step 6: Remove the database file again to test the next script in a fresh state
 # This ensures that the next run of the partial update script starts with a clean state.
@@ -48,11 +48,11 @@ fi
 
 # Step 7: Run `Update` with partial update again to ensure it correctly handles the absence of the database file
 # This tests the partial update script's behavior when there is no existing database.
-"$PROJECT_DIR/Update" Partial No Database
+"$PROJECT_DIR/Update" Partial No Database 5 of 6
 
 # Step 8: Simulate user input to skip downloading the latest passwords and rebuilding the database
 # This tests the Update script's behavior when the user chooses not to update the database.
-echo n | "$PROJECT_DIR/Update"
+echo n | "$PROJECT_DIR/Update" 6 of 6
 
 # Log the end of the test
 log_step_end "Test" "long"
