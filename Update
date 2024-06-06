@@ -28,7 +28,6 @@ SCRIPT_NAME="Update${ARGS:+_$ARGS}"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="$PROJECT_DIR/pwned.db"
-PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
 DOCKERFILE_PATH="Dockerfile"
 
 # Log message
