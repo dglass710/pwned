@@ -240,7 +240,7 @@ The project includes scripts to automate the process of updating the database an
     - **Purpose**: Provides a comprehensive test of the update processes.
     - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
     - **Steps**:
-      1. Removes the existing database file if it exists.
+      1. Removes the database file if it exists.
       2. Runs `Update` without the database file to create a new one.
       3. Runs `Update` with the partial update option to check handling with the database present.
       4. Runs `Update` simulating user input to update the database.
