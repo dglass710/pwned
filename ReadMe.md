@@ -28,7 +28,6 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ├── HumanTime.py (Python)
 ├── ReadMe.md (Markdown)
 ├── Update (Bash)
-├── UpdateTest (Bash)
 ├── bash (Python)
 ├── commaNumber.py (Python)
 ├── pwned.db (SQLite)
@@ -88,7 +87,10 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
       - `LOG_FILE`: Path to the log file.
     - **Steps**:
       1. Ensures Docker is running.
-      2. Prompts the user to update the database based on its timestamp.
+      2. Accepts command line arguments to determine the type of update:
+         - No arguments: Prompts the user to update the database based on its timestamp.
+         - `f` or `F`: Performs a full update.
+         - `p` or `P`: Performs a partial update, or a full update if the database does not exist.
       3. Downloads the latest passwords using HaveIBeenPwned/PwnedPasswordsDownloader.
       4. Removes the old `pwned.db` file.
       5. Runs `txt_to_db.py` to build a new `pwned.db` database.
@@ -177,7 +179,11 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 - Open a terminal and navigate to the project directory.
 - Make the script executable: `chmod +x Update UpdateTest`
-- Run the script: `./Update` or `./UpdateTest`
+- Run the script:
+  - `./Update` for user interaction
+  - `./Update f` for a full update
+  - `./Update p` for a partial update
+  - `./UpdateTest` for comprehensive testing
 - Follow the prompts to update the database and build the Docker image.
 
 ### Running the Docker Container
@@ -213,31 +219,35 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 
 The project includes scripts to automate the process of updating the database and Docker image:
 
-1. **Update (User interaction required)**:
-   - **Purpose**: Prompts the user to decide whether to download the latest password data and rebuild the database based on the timestamp of the existing database file.
-   - **Usage**: Run this script to interactively update the database and Docker image.
-   - **Steps**:
-     1. Ensures Docker is running.
-     2. Prompts the user to update the database based on its timestamp.
-     3. Downloads the latest passwords using HaveIBeenPwned/PwnedPasswordsDownloader.
-     4. Removes the old `pwned.db` file.
-     5. Runs `txt_to_db.py` to build a new `pwned.db` database.
-     6. Removes the `pwnedpasswords.txt` file after building the database.
-     7. Builds a new Docker image with the latest database.
-     8. Pushes the updated Docker image to Docker Hub.
+1. **Update**:
+    - **Purpose**: Prompts the user to decide whether to download the latest password data and rebuild the database based on the timestamp of the existing database file.
+    - **Usage**: Run this script to interactively update the database and Docker image, or specify an argument to automate the update.
+    - **Steps**:
+      1. Ensures Docker is running.
+      2. Accepts command line arguments to determine the type of update:
+         - No arguments: Prompts the user to update the database based on its timestamp if a database exists, or performs a full update if the database does not exist.
+         - If the argument starts with an 'f' (not case sensitive): Performs a full update.
+         - If the argument starts with a 'p' (not case sensitive): Performs a partial update, or a full update if the database does not exist.
+         - The argument provided is logged for reference.
+      3. Downloads the latest passwords using HaveIBeenPwned/PwnedPasswordsDownloader.
+      4. Removes the old `pwned.db` file.
+      5. Runs `txt_to_db.py` to build a new `pwned.db` database.
+      6. Removes the `pwnedpasswords.txt` file after building the database.
+      7. Builds a new Docker image with the latest database.
+      8. Pushes the updated Docker image to Docker Hub.
 
 2. **UpdateTest (Comprehensive testing)**:
-   - **Purpose**: Provides a comprehensive test of the update processes.
-   - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
-   - **Steps**:
-     1. Removes the existing database file.
-     2. Runs `Update` without the database file.
-     3. Runs `Update` with partial update.
-     4. Simulates user input to update the database.
-     5. Always performs a full update.
-     6. Removes the database file again.
-     7. Runs `Update` with partial update to ensure it handles the absence of the database file.
-     8. Simulates user input to skip updating the database.
+    - **Purpose**: Provides a comprehensive test of the update processes.
+    - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
+    - **Steps**:
+      1. Removes the existing database file.
+      2. Runs `Update` without the database file.
+      3. Runs `Update` with partial update.
+      4. Simulates user input to update the database.
+      5. Always performs a full update.
+      6. Removes the database file again.
+      7. Runs `Update` with partial update to ensure it handles the absence of the database file.
+      8. Simulates user input to skip updating the database.
 
 ### Manual Update Process
 
