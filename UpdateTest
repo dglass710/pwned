@@ -15,6 +15,9 @@ DB_FILE="$PROJECT_DIR/pwned.db"
 # Log the start of the test
 log_step_start "Test"
 
+# Change to the Project Directory
+cd $PROJECT_DIR
+
 # Step 1: Remove the database file to ensure the next `Update` script creates a new one
 # This ensures that the next run of the Update script starts with a clean state.
 if [ -f "$DB_FILE" ]; then
