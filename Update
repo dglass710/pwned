@@ -44,15 +44,15 @@ open /Applications/Docker.app
 docker_tasks() {
     prune_docker_images
 
-    log_step_start "Building Docker image."
+    log_step_start "Building Docker image"
     echo "Building Docker image..."
     docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
-    log_step_end "Building Docker image."
+    log_step_end "Building Docker image"
 
-    log_step_start "Pushing Docker image to Docker Hub."
+    log_step_start "Pushing Docker image to Docker Hub"
     echo "Pushing Docker image to Docker Hub..."
     docker push "$DOCKER_IMAGE"
-    log_step_end "Pushing Docker image to Docker Hub."
+    log_step_end "Pushing Docker image to Docker Hub"
 
     echo "Update script completed successfully."
 }
@@ -65,13 +65,13 @@ full_update() {
         rm "$DB_FILE"
     fi
 
-    log_step_start "Downloading the latest passwords."
+    log_step_start "Downloading the latest passwords"
     download_passwords
-    log_step_end "Downloading the latest passwords."
+    log_step_end "Downloading the latest passwords"
 
-    log_step_start "Building the database."
+    log_step_start "Building the database"
     build_database
-    log_step_end "Building the database."
+    log_step_end "Building the database"
     remove_passwords
 
     docker_tasks
