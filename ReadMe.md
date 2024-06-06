@@ -296,6 +296,10 @@ The project includes scripts to automate the process of updating the database an
 2. **Database Connection Issues**:
    - **Solution**: Ensure the `pwned.db` file exists and is in the correct directory. Check the database connection settings in the `bash` script.
 
+3. **Docker Virtual Disk Running Out of Space**:
+   - **Error**: Docker virtual disk space exhausted during build process.
+   - **Solution**: The database file is over 40 GB and needs to be held in two copies during the build: one in the context area and one in the image. Additionally, the latest image is kept around by pruning all but the latest before each build process. Docker defaults to 64 GB of virtual disk space, which is insufficient. Set Docker virtual disk space to at least 100 GB, but 256 GB is recommended to avoid issues. Adjust this setting in Docker's preferences.
+
 ## Security Considerations
 
 - **Data Handling**: Ensure that sensitive data, such as passwords, are handled securely and not exposed unnecessarily.
