@@ -28,6 +28,7 @@ SCRIPT_NAME="Update${ARGS:+_$ARGS}"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="$PROJECT_DIR/pwned.db"
+TMP_DB_FILE="$PROJECT_DIR/pwned2.db"
 DOCKERFILE_PATH="Dockerfile"
 
 # Log message
@@ -56,58 +57,35 @@ docker_tasks() {
 
     echo "Update script completed successfully."
 }
+
 # Function to perform a full update
 full_update() {
-    HASH_FILE="$PROJECT_DIR/last_hash.txt"
-
     log_step_start "Downloading the latest passwords"
     download_passwords
     log_step_end "Downloading the latest passwords"
 
-    # Calculate the new hash
-    new_hash=$(shasum "$PASSWORD_FILE" | awk '{print $1}')
+    log_step_start "Building the database"
+    # Build the database with a temporary name
+    build_database "$TMP_DB_FILE"
+    log_step_end "Building the database"
 
-    # Check if previous hash file exists, if not create it
-    if [ ! -f "$HASH_FILE" ]; then
-        touch "$HASH_FILE"
-    fi
+    # Calculate checksums for the old and new databases
+    old_checksum=$(shasum "$DB_FILE" 2>/dev/null | awk '{print $1}')
+    new_checksum=$(shasum "$TMP_DB_FILE" | awk '{print $1}')
 
-    # Read the stored hash
-    stored_hash=$(cat "$HASH_FILE")
-
-    # Compare hashes or check if the database file exists
-    if [ "$new_hash" != "$stored_hash" ] || [ ! -f "$DB_FILE" ]; then
-        if [ -z "$stored_hash" ]; then
-            echo "No previous hash found. Proceeding with the update."
-            log_message $SCRIPT_NAME "No previous hash found. Proceeding with the update."
-        elif [ ! -f "$DB_FILE" ]; then
-            echo "Database file not found. Proceeding with the update."
-            log_message $SCRIPT_NAME "Database file not found. Proceeding with the update."
-        else
-            echo "Password file has changed. Proceeding with the update."
-            log_message $SCRIPT_NAME "Password file has changed. Proceeding with the update."
-        fi
-
-        # Store the new hash
-        echo "$new_hash" > "$HASH_FILE"
-
-        if [ -f "$DB_FILE" ]; then
-            log_message $SCRIPT_NAME "Removing old database."
-            echo "Removing old database..."
-            rm "$DB_FILE"
-        fi
-
-        log_step_start "Building the database"
-        build_database
-        log_step_end "Building the database"
-        log_message $SCRIPT_NAME "The new database has checksum: $(shasum "$PROJECT_DIR/pwned.db" | awk '{print $1}')"
+    if [ "$old_checksum" == "$new_checksum" ]; then
+        log_message $SCRIPT_NAME "The new database is identical to the old one. Removing temporary database."
+        echo "The new database is identical to the old one. Removing temporary database..."
+        rm "$TMP_DB_FILE"
     else
-        echo "Password file has not changed and database file exists. Skipping the database build."
-        log_message $SCRIPT_NAME "Password file has not changed and database file exists. Skipping the database build."
+        log_message $SCRIPT_NAME "The new database differs from the old one. Updating database."
+        echo "The new database differs from the old one. Updating database..."
+        mv "$TMP_DB_FILE" "$DB_FILE"
     fi
 
-    # Remove passwords and run docker tasks regardless of whether the database was rebuilt
+    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
     remove_passwords
+
     docker_tasks
 }
 
@@ -173,3 +151,10 @@ fi
 
 # Log the end of the script execution
 log_step_end "Execution"
+
+# Modify build_database to accept an optional output file argument
+build_database() {
+    local output_file="${1:-$DB_FILE}"
+    echo "Building the database..."
+    $PYTHON_PATH txt_to_db_no_progress.py -o "$output_file"
+}
