@@ -34,7 +34,6 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ├── pwnedpasswords.txt (Plain Text)
 ├── shared_functions.sh (Bash)
 ├── txt_to_db.py (Python)
-├── txt_to_db_no_progress.py (Python)
 ├── user_settings.sh (Bash)
 └── updates.log (Log File)
 ```
