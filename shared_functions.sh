@@ -45,22 +45,11 @@ download_passwords() {
 # Function to build the database
 build_database() {
     echo "Building the database..."
-    $PYTHON_PATH txt_to_db_no_progress.py
+    $PYTHON_PATH txt_to_db.py
 }
 
 # Remove the password file after building the database
 remove_passwords() {
-    log_message $SCRIPT_NAME "Removing latest passwords."
-    echo "Removing the password file..."
-    rm "$PASSWORD_FILE"
-}
-
-# Function to build the database with progress updates
-build_database_progress() {
-    echo "Building the database..."
-    $PYTHON_PATH txt_to_db.py
-
-    # Remove the password file after building the database
     log_message $SCRIPT_NAME "Removing latest passwords."
     echo "Removing the password file..."
     rm "$PASSWORD_FILE"
