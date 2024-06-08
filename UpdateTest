@@ -13,7 +13,7 @@ SCRIPT_NAME="UpdateTest"
 DB_FILE="$PROJECT_DIR/pwned.db"
 
 # Log the start of the test
-log_step_start "Test."
+log_step_start "Test"
 
 # Change to the Project Directory
 cd $PROJECT_DIR
@@ -55,4 +55,4 @@ echo y | "$PROJECT_DIR/Update" User Attempts Database Update 5 of 6
 "$PROJECT_DIR/Update" Partial With Database 6 of 6 
 
 # Log the end of the test
-log_step_end "Test."
+log_step_end "Test"
