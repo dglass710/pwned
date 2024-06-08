@@ -4,4 +4,4 @@ PROJECT_DIR="$(dirname "$0")"
 # Define constants
 DOCKER_IMAGE="dglass710/pwned"
 LOG_FILE="$PROJECT_DIR/updates.log"
-PYTHON_PATH="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
+PYTHON_PATH="/usr/local/bin/py"

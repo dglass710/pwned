@@ -57,7 +57,7 @@ def process_file(filename, cursor, total_lines, progress_precision):
 def main(infile, progress_precision=.01):
     print('Ensure pwned.db does not already exist. If it does, remove it and run this script again!')
 
-    conn = sqlite3.connect('pwned.db')
+    conn = sqlite3.connect('new_pwned.db')
     cursor = conn.cursor()
     print('Connected to database. Creating tables...')
     create_tables(cursor)

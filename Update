@@ -17,6 +17,10 @@
 source "$(dirname "$0")/user_settings.sh"
 source "$(dirname "$0")/shared_functions.sh"
 
+# Add .NET runtime and tools to PATH
+export DOTNET_ROOT="$(brew --prefix dotnet@6)/libexec"
+export PATH="$(brew --prefix dotnet@6)/bin:$DOTNET_ROOT:/Users/dag/.dotnet/tools:$PATH"
+
 set -e  # Exit immediately if a command exits with a non-zero status.
 
 # Join all command-line arguments into a single string, replacing spaces with underscores
@@ -28,7 +32,7 @@ SCRIPT_NAME="Update${ARGS:+_$ARGS}"
 PASSWORD_BASENAME="pwnedpasswords"
 PASSWORD_FILE="${PASSWORD_BASENAME}.txt"
 DB_FILE="$PROJECT_DIR/pwned.db"
-TMP_DB_FILE="$PROJECT_DIR/pwned2.db"
+TMP_DB_FILE="$PROJECT_DIR/new_pwned.db"
 DOCKERFILE_PATH="Dockerfile"
 
 # Log message
@@ -154,10 +158,3 @@ fi
 
 # Log the end of the script execution
 log_step_end "Execution"
-
-# Modify build_database to accept an optional output file argument
-build_database() {
-    local output_file="${1:-$DB_FILE}"
-    echo "Building the database..."
-    $PYTHON_PATH txt_to_db_no_progress.py -o "$output_file"
-}
