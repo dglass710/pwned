@@ -28,6 +28,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ├── HumanTime.py (Python)
 ├── ReadMe.md (Markdown)
 ├── Update (Bash)
+├── UpdateTest (Bash)
 ├── bash (Python)
 ├── commaNumber.py (Python)
 ├── pwned.db (SQLite)
@@ -88,9 +89,10 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Steps**:
       1. Ensures Docker is running.
       2. Accepts command line arguments to determine the type of update:
-         - No arguments: Prompts the user to update the database based on its timestamp.
-         - `f` or `F`: Performs a full update.
-         - `p` or `P`: Performs a partial update, or a full update if the database does not exist.
+         - No arguments: Prompts the user to update the database based on its timestamp if a database exists, or performs a full update if the database does not exist.
+         - If the argument starts with an 'f' (not case sensitive): Performs a full update.
+         - If the argument starts with a 'p' (not case sensitive): Performs a partial update, or a full update if the database does not exist.
+         - The argument provided is logged for reference.
       3. Downloads the latest passwords using HaveIBeenPwned/PwnedPasswordsDownloader.
       4. Removes the old `pwned.db` file.
       5. Runs `txt_to_db.py` to build a new `pwned.db` database.
@@ -104,14 +106,14 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Purpose**: Provides a comprehensive test of the update processes.
     - **Usage**: Run this script to perform a series of tests on the update process, ensuring each step works as expected.
     - **Steps**:
-      1. Removes the existing database file.
-      2. Runs `Update` without the database file.
-      3. Runs `Update` with partial update.
-      4. Simulates user input to update the database.
-      5. Always performs a full update.
-      6. Removes the database file again.
-      7. Runs `Update` with partial update to ensure it handles the absence of the database file.
-      8. Simulates user input to skip updating the database.
+      1. Removes the database file if it exists.
+      2. Runs `Update` without the database file to create a new one.
+      3. Removes the database file again to test the next script in a fresh state.
+      4. Runs `Update` with partial update to ensure it correctly handles the absence of the database file.
+      5. Simulates user input to skip downloading the latest passwords and rebuilding the database.
+      6. Runs `Update` with the full update option to verify it recreates the existing database.
+      7. Simulates user input to download the latest passwords and rebuild the database.
+      8. Runs `Update` with partial update to ensure it correctly handles the presence of an existing database.
 
 8. **user_settings.sh**
     - **Purpose**: Configuration file containing constants and functions shared by all scripts.
@@ -174,6 +176,7 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 - Set the `PROJECT_DIR` variable to the absolute path of your project directory.
 - Set the `DOCKER_IMAGE` variable to the desired name for your Docker image.
 - Set the `LOG_FILE` variable to the desired path for your log file.
+- Set the `PYTHON_PATH` variable to the path of your Python executable.
 
 ### Running the Script
 
@@ -242,12 +245,12 @@ The project includes scripts to automate the process of updating the database an
     - **Steps**:
       1. Removes the database file if it exists.
       2. Runs `Update` without the database file to create a new one.
-      3. Runs `Update` with the partial update option to check handling with the database present.
-      4. Runs `Update` simulating user input to update the database.
-      5. Runs `Update` with the full update option to verify it recreates the existing database.
-      6. Removes the database file again (only if it exists but it should exist due to the previous step).
-      7. Runs `Update` with the partial update option to ensure it handles the absence of the database file.
-      8. Runs `Update` simulating user input to skip updating the database.
+      3. Removes the database file again to test the next script in a fresh state.
+      4. Runs `Update` with partial update to ensure it correctly handles the absence of the database file.
+      5. Simulates user input to skip downloading the latest passwords and rebuilding the database.
+      6. Runs `Update` with the full update option to verify it recreates the existing database.
+      7. Simulates user input to download the latest passwords and rebuild the database.
+      8. Runs `Update` with partial update to ensure it correctly handles the presence of an existing database.
 
 ### Manual Update Process
 
