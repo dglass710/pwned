@@ -82,10 +82,10 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
     - **Purpose**: Automates the process of updating the database and Docker image.
     - **Usage**: Run this script to download the latest passwords, rebuild the database, and create a new Docker image.
     - **Configuration**: Users need to update the `user_settings.sh` script for:
-      - `PROJECT_DIR`: Absolute path to the project directory.
+      - `PROJECT_DIR`: Dynamically set to the directory of the script.
       - `DOCKER_IMAGE`: Name of the Docker image.
       - `LOG_FILE`: Path to the log file.
-      - `PYTHON_PATH`: Path to the `python` executable. You can get this by running `which python3` or `which python`.
+    - **Disclaimer**: `PROJECT_DIR` will only be set correctly when the script is called from within the project directory or when using the absolute path to the `Update` or `UpdateTest` executable.
     - **Steps**:
       1. Ensures Docker is running.
       2. Accepts command line arguments to determine the type of update:
@@ -118,10 +118,10 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 8. **user_settings.sh**
     - **Purpose**: Configuration file containing constants and functions shared by all scripts.
     - **Contents**:
-      - `PROJECT_DIR`: Absolute path to the project directory.
+      - `PROJECT_DIR`: Dynamically set to the directory of the script.
       - `DOCKER_IMAGE`: Name of the Docker image.
       - `LOG_FILE`: Path to the log file.
-      - `log_message()`: Function to log messages with a timestamp and script name.
+      - `PYTHON_PATH`: Dynamically finds the path to the `python` executable.
 
 9. **shared_functions.sh**
     - **Purpose**: Contains functions shared by the update and test scripts.
@@ -173,10 +173,8 @@ This project provides an offline version of the website HaveIBeenPwned.com. It e
 ### Configuration
 
 - Open the `user_settings.sh` script in a text editor.
-- Set the `PROJECT_DIR` variable to the absolute path of your project directory.
 - Set the `DOCKER_IMAGE` variable to the desired name for your Docker image.
 - Set the `LOG_FILE` variable to the desired path for your log file.
-- Set the `PYTHON_PATH` variable to the path of your Python executable.
 
 ### Running the Script
 
