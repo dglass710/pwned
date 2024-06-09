@@ -47,27 +47,27 @@ open /Applications/Docker.app
 
 # Function to perform Docker tasks
 docker_tasks() {
-    prune_docker_images
+	prune_docker_images
 
-    log_step_start "Building Docker image"
-    echo "Building Docker image..."
-    docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
-    log_step_end "Building Docker image"
+	log_step_start "Building Docker image"
+	echo "Building Docker image..."
+	docker build -t "$DOCKER_IMAGE" -f "$DOCKERFILE_PATH" .
+	log_step_end "Building Docker image"
 
-    log_step_start "Pushing Docker image to Docker Hub"
-    echo "Pushing Docker image to Docker Hub..."
-    docker push "$DOCKER_IMAGE"
-    log_step_end "Pushing Docker image to Docker Hub"
+	log_step_start "Pushing Docker image to Docker Hub"
+	echo "Pushing Docker image to Docker Hub..."
+	docker push "$DOCKER_IMAGE"
+	log_step_end "Pushing Docker image to Docker Hub"
 
-    echo "Update script completed successfully."
+	echo "Update script completed successfully."
 }
 
 # Function to perform a full update
 full_update() {
-    # Download the latest passwords 
-    log_step_start "Downloading the latest passwords"
-    download_passwords
-    log_step_end "Downloading the latest passwords"
+	# Download the latest passwords 
+	log_step_start "Downloading the latest passwords"
+	download_passwords
+	log_step_end "Downloading the latest passwords"
 
     # Build the database with a temporary name
     log_step_start "Building the database"
@@ -79,22 +79,22 @@ full_update() {
     new_checksum=$(shasum "$TMP_DB_FILE" | awk '{print $1}')
 
     if [ "$old_checksum" == "$new_checksum" ]; then
-        log_message $SCRIPT_NAME "The new database is identical to the old one. Removing temporary database."
-        echo "The new database is identical to the old one. Removing temporary database..."
-        rm "$TMP_DB_FILE"
-	log_message $SCRIPT_NAME "Both databases have checksum: $new_checksum"
+	    log_message $SCRIPT_NAME "The new database is identical to the old one. Removing temporary database."
+	    echo "The new database is identical to the old one. Removing temporary database..."
+	    rm "$TMP_DB_FILE"
+	    log_message $SCRIPT_NAME "Both databases have checksum: $new_checksum"
     else
-        if [ "$old_checksum" == "" ]; then
-            log_message $SCRIPT_NAME "No previous database found. Moving new database."
-            echo "No previous database found. Moving new database..."
-	    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
-	else
-            log_message $SCRIPT_NAME "The new database differs from the old one. Updating database."
-            echo "The new database differs from the old one. Updating database..."
-	    log_message $SCRIPT_NAME "The old database has checksum: $old_checksum"
-	    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
-	fi
-        mv "$TMP_DB_FILE" "$DB_FILE"
+	    if [ "$old_checksum" == "" ]; then
+		    log_message $SCRIPT_NAME "No previous database found. Moving new database."
+		    echo "No previous database found. Moving new database..."
+		    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
+	    else
+		    log_message $SCRIPT_NAME "The new database differs from the old one. Updating database."
+		    echo "The new database differs from the old one. Updating database..."
+		    log_message $SCRIPT_NAME "The old database has checksum: $old_checksum"
+		    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
+	    fi
+	    mv "$TMP_DB_FILE" "$DB_FILE"
     fi
 
     remove_passwords
@@ -104,62 +104,62 @@ full_update() {
 
 # Function to perform a partial update
 partial_update() {
-    if [ ! -f "$DB_FILE" ]; then
-        log_message $SCRIPT_NAME "No existing database found. Downloading passwords and building database."
-        echo "No existing database found. Downloading passwords and building database."
+	if [ ! -f "$DB_FILE" ]; then
+		log_message $SCRIPT_NAME "No existing database found. Downloading passwords and building database."
+		echo "No existing database found. Downloading passwords and building database."
 
-        full_update
-    else
-        echo "Now pausing to ensure Docker is started."
-        sleep 5  # Wait for Docker to start
-        docker_tasks
-    fi
+		full_update
+	else
+		echo "Now pausing to ensure Docker is started."
+		sleep 5  # Wait for Docker to start
+		docker_tasks
+	fi
 }
 
 # Function to handle the default behavior (with or without an invalid argument)
 default_behavior() {
-    if [ -f "$DB_FILE" ]; then
-        log_message $SCRIPT_NAME "Prompting user to see if they would like to replace the existing database."
-        last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
-        read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
-        log_message $SCRIPT_NAME "User response: $choice"
-        case "$choice" in
-            y|Y )
-                full_update
-                ;;
-            n|N )
-                log_message $SCRIPT_NAME "Skipping download and database rebuild."
-                echo "Skipping download and database rebuild."
-                echo "Now pausing to ensure Docker is started."
-                sleep 5  # Wait for Docker to start
-                docker_tasks
-                ;;
-            * )
-                log_message $SCRIPT_NAME "Invalid choice. Exiting!"
-                echo "Invalid choice. Exiting."
-                exit 1
-                ;;
-        esac
-    else
-        log_message $SCRIPT_NAME "No existing database found. Creating a new one."
-        echo "No existing database found. Creating a new one."
-        full_update
-    fi
+	if [ -f "$DB_FILE" ]; then
+		log_message $SCRIPT_NAME "Prompting user to see if they would like to replace the existing database."
+		last_updated=$(stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$DB_FILE")
+		read -p "The database was last updated on $last_updated. Would you like to download the newest passwords and rebuild the database? (y/n) " choice
+		log_message $SCRIPT_NAME "User response: $choice"
+		case "$choice" in
+			y|Y )
+				full_update
+				;;
+			n|N )
+				log_message $SCRIPT_NAME "Skipping download and database rebuild."
+				echo "Skipping download and database rebuild."
+				echo "Now pausing to ensure Docker is started."
+				sleep 5  # Wait for Docker to start
+				docker_tasks
+				;;
+			* )
+				log_message $SCRIPT_NAME "Invalid choice. Exiting!"
+				echo "Invalid choice. Exiting."
+				exit 1
+				;;
+		esac
+	else
+		log_message $SCRIPT_NAME "No existing database found. Creating a new one."
+		echo "No existing database found. Creating a new one."
+		full_update
+	fi
 }
 
 # Main script logic based on the argument
 if [ $# -eq 0 ]; then
-    # Default behavior (check for database and prompt the user if it exists)
-    default_behavior
+	# Default behavior (check for database and prompt the user if it exists)
+	default_behavior
 elif [[ "$1" =~ ^[fF] ]]; then
-    # Full update
-    full_update
+	# Full update
+	full_update
 elif [[ "$1" =~ ^[pP] ]]; then
-    # Partial update
-    partial_update
+	# Partial update
+	partial_update
 else
-    # Treat any other argument as default behavior
-    default_behavior
+	# Treat any other argument as default behavior
+	default_behavior
 fi
 
 # Log the end of the script execution
