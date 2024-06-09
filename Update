@@ -84,11 +84,16 @@ full_update() {
         rm "$TMP_DB_FILE"
 	log_message $SCRIPT_NAME "Both databases have checksum: $new_checksum"
     else
-        log_message $SCRIPT_NAME "The new database differs from the old one. Updating database."
-        echo "The new database differs from the old one. Updating database..."
+        if [ "$old_checksum" == "" ]; then
+            log_message $SCRIPT_NAME "No previous database found. Moving new database."
+            echo "No previous database found. Moving new database..."
+	    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
+	else
+            log_message $SCRIPT_NAME "The new database differs from the old one. Updating database."
+            echo "The new database differs from the old one. Updating database..."
+	    log_message $SCRIPT_NAME "The old database has checksum: $old_checksum"
+	    log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
         mv "$TMP_DB_FILE" "$DB_FILE"
-	log_message $SCRIPT_NAME "The old database has checksum: $old_checksum"
-	log_message $SCRIPT_NAME "The new database has checksum: $new_checksum"
     fi
 
     remove_passwords
