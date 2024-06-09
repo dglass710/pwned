@@ -28,8 +28,10 @@ log_step_end() {
 
 	if [ $duration -ge 3600 ]; then
 		log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds."
-	else
+	elif [ $duration -ge 60 ]; then
 		log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds."
+	else
+		log_message $SCRIPT_NAME "Completed $step in ${seconds} seconds."
 	fi
 
 	rm "/tmp/${step}_start_time"
