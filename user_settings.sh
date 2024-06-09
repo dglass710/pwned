@@ -15,6 +15,3 @@ else
 	echo "Python interpreter not found."
 	exit 1
 fi
-
-# Print the Python path for verification
-echo "Using Python interpreter at: $PYTHON_PATH"
