@@ -27,11 +27,11 @@ log_step_end() {
 	local seconds=$((duration % 60))
 
 	if [ $duration -ge 3600 ]; then
-		log_message $SCRIPT_NAME "Completed $step in ${hours} hours, ${minutes} minutes and ${seconds} seconds."
+		log_message $SCRIPT_NAME "Completed $step in ${hours} hour(s) ${minutes} minute(s) and ${seconds} second(s)."
 	elif [ $duration -ge 60 ]; then
-		log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minutes and ${seconds} seconds."
+		log_message $SCRIPT_NAME "Completed $step in ${total_minutes} minute(s) and ${seconds} second(s)."
 	else
-		log_message $SCRIPT_NAME "Completed $step in ${seconds} seconds."
+		log_message $SCRIPT_NAME "Completed $step in ${seconds} second(s)."
 	fi
 
 	rm "/tmp/${step}_start_time"
